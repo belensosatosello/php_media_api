@@ -1,6 +1,7 @@
 {
     "require": {
-        "silex/silex": "~2.0"
+        "silex/silex": "~2.0",
+        "haridarshan/instagram-php": "^2.2"
     },
 	
 	"autoload": {
