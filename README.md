@@ -1,11 +1,10 @@
-Media Location API
-==================
+# **Media Location API**
+
 This Rest API returns information about the location of an Instagram media. This information can be retrieved by hiting the endpoint provided using the media id as a parameter.
 
 * * *
+## **Setup**
 
-Setup
------
 To run this project you need:
 
 - [PHP 7.1](http://windows.php.net/download#php-7.1) (the following extensions need to be enabled: php\_curl.dll, php\_mbstring.dll,php\_openssl.dll)
@@ -13,7 +12,15 @@ To run this project you need:
 - [Silex](http://silex.sensiolabs.org/)
 - [Composer](https://getcomposer.org/)
 
-Then you need to run the following:
+To enable Curl download the file from the link above and save it in:
+
+    {yourPathToPHPInstallFolder}\ext
+
+Then uncomment and edit the following line in the php.ini file:
+
+    curl.cainfo="{yourPathToPHPInstallFolder}\ext\cacert.pem"
+
+After that you will need to run the following:
 
     $ git clone https://belensosatosello@bitbucket.org/belensosatosello/belensosatosello-test.git
     $ cd belensosatosello-test
@@ -23,12 +30,11 @@ Then you need to run the following:
 
 Now you can access the following URLs:
 
-- [localhost:8080](localhost:8080): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account. After that you will have generated your token and you will be redirected to /profile.
+- [localhost:8080](localhost:8080): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account.Your token will be generated and you will be redirected to /profile.
 - [localhost:8080/profile](localhost:8080/prodile): Here you can see basic information of the authenticated user.
 - [localhost:8080/media/{media\_id}](http://localhost:8000/media/1402451097368744018_1173952339): Here you can see the media location data.
 
 * * *
-
 ### Endpoint
 
     localhost:8000/media/{media_id}
@@ -48,10 +54,9 @@ Now you can access the following URLs:
         }
     }
 
-* * *
 
-Development Explanation
------------------------
+* * *
+## **Development Explanation**
 I chose [Bitbucket](https://bitbucket.org/) as a version control system since it was one of the few that provide private repositories for free. 
 
 This project was built using Silex as suggested. This microframework turned out to be really easy to use and helpful to handle routing.  
