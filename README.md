@@ -2,11 +2,13 @@ Media Location API
 ==================
 This Rest API returns information about the location of an Instagram media. This information can be retrieved by hiting the endpoint provided using the media id as a parameter.
 
+* * *
+
 Setup
 -----
 To run this project you need:
 
-- [PHP 7.1] (http://windows.php.net/download#php-7.1) (the following extensions need to be enabled: php\_curl.dll, php\_mbstring.dll,php\_openssl.dll)
+- [PHP 7.1] (http://windows.php.net/download#php-7.1) \(the following extensions need to be enabled: php\_curl.dll, php\_mbstring.dll,php\_openssl.dll)
 - [Curl](https://gist.github.com/VersatilityWerks/5719158/download)
 - [Silex](http://silex.sensiolabs.org/)
 - [Composer](https://getcomposer.org/)
@@ -24,29 +26,28 @@ Now you can access the following URLs:
 - [localhost:8080](localhost:8080): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account. After that you will have generated your token and you will be redirected to /profile.
 - [localhost:8080/profile](localhost:8080/prodile): Here you can see basic information of the authenticated user.
 - [localhost:8080/media/{media\_id}](http://localhost:8000/media/1402451097368744018_1173952339): Here you can see the media location data.
-	
-#### Endpoint
 
-<pre>localhost:8000/media/{media_id}</pre>
+* * *
 
-#### Sample Request
-<pre>
-GET /media/123456
-</pre>
+### Endpoint
+    localhost:8000/media/{media_id}
 
-#### Sample Response
+### Sample Request
+    GET /media/123456
 
-<pre>
-{
-    "id": 123456,
-    "location": {
-        "geopoint": {
-            "latitude": 42.277,
-            "longitude": -71.9256
+
+### Sample Response
+    {
+        "id": 123456,
+        "location": {
+            "geopoint": {
+                "latitude": 42.277,
+                "longitude": -71.9256
+            }
         }
     }
-}
-</pre>
+
+* * *
 
 Development Explanation
 -----------------------
