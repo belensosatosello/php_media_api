@@ -8,7 +8,7 @@ Setup
 -----
 To run this project you need:
 
-- [PHP 7\.1] (http://windows.php.net/download#php-7.1) \(the following extensions need to be enabled: php\_curl.dll, php\_mbstring.dll,php\_openssl.dll)
+- [PHP 7.1](http://windows.php.net/download#php-7.1) (the following extensions need to be enabled: php\_curl.dll, php\_mbstring.dll,php\_openssl.dll)
 - [Curl](https://gist.github.com/VersatilityWerks/5719158/download)
 - [Silex](http://silex.sensiolabs.org/)
 - [Composer](https://getcomposer.org/)
@@ -30,6 +30,7 @@ Now you can access the following URLs:
 * * *
 
 ### Endpoint
+
     localhost:8000/media/{media_id}
 
 ### Sample Request
