@@ -1,0 +1,9 @@
+{
+	"env" : "dev",
+    "debug" : true,
+    "instagram_api" : {
+        "clientId" : "44904229b57445f49a88ef2de046379f",
+        "clientSecret" : "b4b4fc1b7a1540ac91c72eeeca6c3d47",
+        "clientCallback" : "http://localhost:8000/"
+    }
+}
