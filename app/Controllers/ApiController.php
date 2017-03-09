@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Controllers;
 	
 use Silex\Application;
 use Haridarshan\Instagram\Instagram;
