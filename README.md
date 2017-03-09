@@ -30,7 +30,7 @@ After that you will need to run the following:
 
 Now you can access the following URLs:
 
-- [localhost:8080](localhost:8080): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account. After that you will have generated your token and you will be redirected to /profile.
+- [localhost:8080](localhost:8080): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account.Your token will be generated and you will be redirected to /profile.
 - [localhost:8080/profile](localhost:8080/prodile): Here you can see basic information of the authenticated user.
 - [localhost:8080/media/{media\_id}](http://localhost:8000/media/1402451097368744018_1173952339): Here you can see the media location data.
 
