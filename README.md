@@ -12,7 +12,15 @@ To run this project you need:
 - [Silex](http://silex.sensiolabs.org/)
 - [Composer](https://getcomposer.org/)
 
-Then you need to run the following:
+To enable Curl download the file from the link above and save it in:
+
+    {yourPathToPHPInstallFolder}\ext
+
+Then uncomment and edit the following line in the php.ini file:
+
+    curl.cainfo="{yourPathToPHPInstallFolder}\ext\cacert.pem"
+
+After that you will need to run the following:
 
     $ git clone https://belensosatosello@bitbucket.org/belensosatosello/belensosatosello-test.git
     $ cd belensosatosello-test
