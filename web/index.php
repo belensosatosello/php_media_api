@@ -20,6 +20,7 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 //Load config file
 $app->register(new ConfigServiceProvider(), [
     'config.dir' => __DIR__ . '/../config',
+	'config.env' => 'test',
 ]);
 
 $app['instagram'] = function() use ($app){
