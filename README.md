@@ -78,4 +78,4 @@ This API it was tested using built in PHP server due to the fact that it was the
 
 I used [Instagram-php](https://github.com/haridarshan/instagram-php) to get Instagram token and data. This library is a wrapper that simplifies the access to Instagram API. I struggled a bit trying to get the token within the application but this library helped me to do it.
 
-I also struggled when developing and running the Unit Tests, but following other sample applications (as well as development blog and forums on Silex and PHPUnit) I was able to figure out what to test and how.
+I also struggled when developing and running the Unit Tests, but following other sample applications (as well as development blogs and forums on Silex and PHPUnit) I was able to figure out what to test and how.
