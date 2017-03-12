@@ -1,7 +1,7 @@
 <?php
-	
+
 // /app/app.php
-require_once __DIR__.'/bootstrap.php';
+require __DIR__.'/bootstrap.php';
 
 use Controllers\ApiController;
 use Haridarshan\Instagram\Instagram;
@@ -19,11 +19,18 @@ $app = new Silex\Application();
 
 $app->register(new Silex\Provider\SessionServiceProvider());
 
+$app->register(new Silex\Provider\MonologServiceProvider(), array(
+    'monolog.logfile' => __DIR__.'/development.log',
+));
+
+if (!isset($env)) {
+    $env = 'dev';
+}
 
 //Load config file
 $app->register(new ConfigServiceProvider(), [
     'config.dir' => __DIR__ . '/../config',
-	'config.env' => 'test',
+	'config.env' => $env,
 ]);
 
 $app['instagram'] = function() use ($app){
@@ -32,6 +39,7 @@ $app['instagram'] = function() use ($app){
 		'ClientId' => $app['instagram_api']['clientId'],
 		'ClientSecret' => $app['instagram_api']['clientSecret'],
 		'Callback' => $app['instagram_api']['clientCallback'],
+		"State" => $app['instagram_api']['state'],
 		)
 	);
 };
@@ -39,5 +47,4 @@ $app['instagram'] = function() use ($app){
 // Routes
 require __DIR__.'/routes.php';
 	
-//Run silex
-$app->run();
+return $app;

@@ -1,9 +1,18 @@
 {
-	"env" : "dev",
     "debug" : true,
+	"session.test" : true,
     "instagram_api" : {
         "clientId" : "44904229b57445f49a88ef2de046379f",
         "clientSecret" : "b4b4fc1b7a1540ac91c72eeeca6c3d47",
-        "clientCallback" : "http://localhost:8000/"
-    }
+        "clientCallback" : "http://localhost:8000/",
+		"state" : "01619ed"
+    },
+	"valid.login_url": "https://api.instagram.com/oauth/authorize?client_id=44904229b57445f49a88ef2de046379f&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=code&state=01619ed&scope=basic+public_content",
+	"valid.media_id" : "1402451097368744018_1173952339",
+	"valid.latitude" : "-31.293694444444",
+	"valid.longitude" : "-64.306611111111",
+	"valid.token" : "1173952339.4490422.343e3f74bc6a48e9ac3541784d5af621",
+	"invalid.token" : "4490422.343e3f74bc6a48e9ac3541784d5af621",
+	"invalid.media_id" : "1234",
+	"invalid.no_location_media_id" : "1417818202482025586_1173952339"
 }

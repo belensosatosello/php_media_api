@@ -56,6 +56,19 @@ Now you can access the following URLs:
 
 
 * * *
+## **Run Unit Tests**
+
+To run unit test, execute the following command on the project root directory:
+
+    vendor\bin\phpunit --configuration phpunit.xml.dist
+
+In order to run unit tests you will need to get a valide token from the following URL:
+    
+	https://api.instagram.com/oauth/authorize?client_id=44904229b57445f49a88ef2de046379f&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=token&state=01619ed&scope=basic+public_content
+
+This will redirect to a url ending with access_token=XXX,  paste XXX value it into config/test.json
+
+* * *
 ## **Development Explanation**
 I chose [Bitbucket](https://bitbucket.org/) as a version control system since it was one of the few that provide private repositories for free. 
 
@@ -63,4 +76,6 @@ This project was built using Silex as suggested. This microframework turned out 
 
 This API it was tested using built in PHP server due to the fact that it was the faster and simpler way to do it (There was no need of extra software). 
 
-I used [Instagram-php](https://github.com/haridarshan/instagram-php) to get Instagram token and data. This library is a wrapper that simplifies the access to Instagram API.
+I used [Instagram-php](https://github.com/haridarshan/instagram-php) to get Instagram token and data. This library is a wrapper that simplifies the access to Instagram API. I struggled a bit trying to get the token within the application but this library helped me to do it.
+
+I also struggled when developing and running the Unit Tests, but following other sample applications (as well as development blog and forums on Silex and PHPUnit) I was able to figure out what to test and how.

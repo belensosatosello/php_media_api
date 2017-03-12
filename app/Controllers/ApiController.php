@@ -3,11 +3,10 @@
 namespace Controllers;
 	
 use Silex\Application;
+use Exception;
 use Haridarshan\Instagram\Instagram;
 use Haridarshan\Instagram\InstagramRequest;
-use Haridarshan\Instagram\Exceptions\InstagramOAuthException;
-use Haridarshan\Instagram\Exceptions\InstagramResponseException;
-use Haridarshan\Instagram\Exceptions\InstagramServerException;
+use Haridarshan\Instagram\Exceptions\InstagramException;
 	
 class ApiController
 {
@@ -31,34 +30,35 @@ class ApiController
 				return $app->json($response,$response->meta->code);
 			}
 
-		} catch(InstagramResponseException $e) {
-			//return $app->json($e->getMessage());
-			return $app->json($e);
-		}catch(InstagramServerException $e) {
-			return $app->json($e->getMessage());
-		}
+		}catch(InstagramException $e) {
+			return $app->json($e->getType() , $e->getCode());
+		} catch (Exception $ex) {
+            return $app->json($ex, 500);
+        }
 	
-				
-		//Get the location information
-		$lat = $user_data->data->location->latitude;
-		$long =$user_data->data->location->longitude;
+		$geopoint = [];
+	
+		try{
+			if(empty($user_data->data->location))
+			{
+				throw new Exception("No instagram location data was found.");
+			}	
+			//Get the location information
+			$geopoint['latitude'] = $user_data->data->location->latitude;
+			$geopoint['longitude'] =$user_data->data->location->longitude;
 			
-		if(empty($lat) || empty($long))
-		{
-			throw new Exception("No instagram location data was found.");
-		}		
+			
+		} catch (Exception $ex) {
+            return $app->json(['id' => $user_data->data->id, 'location' => 'no location data']);
+        }
 		
-		$geopoint = array(
-			"geopoint" => array(
-			"latitude" => $lat,
-			"longitude"=> $long,
-			//"code"=> $code,
-			)
-		);
+		$location = array(
+			"geopoint"=>$geopoint,
+			);
 			
 		$result_array = array(
 			"id" => $media_id,
-			"location" => $geopoint,
+			"location" => $location,
 		);
 		
 		return $app->json($result_array);
@@ -86,8 +86,7 @@ class ApiController
 				"basic",
 				"public_content"
 			];
-			header('Location: ' . $instagram->getLoginUrl(["scope" => $scope]));
-			exit;
+			return $app->redirect($instagram->getLoginUrl(["scope" => $scope]));
 		} else {
 			$oauth= $instagram->oauth($_GET['code']);
 			$token = $oauth->getAccessToken();
