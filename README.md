@@ -62,7 +62,7 @@ To run unit test, execute the following command on the project root directory:
 
     vendor\bin\phpunit --configuration phpunit.xml.dist
 
-In order to run unit tests you will need to get a valide token from the following URL:
+In order to run unit tests you will need to get a valid token from the following URL:
     
 	https://api.instagram.com/oauth/authorize?client_id=44904229b57445f49a88ef2de046379f&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=token&state=01619ed&scope=basic+public_content
 
