@@ -6,12 +6,15 @@ require __DIR__.'/bootstrap.php';
 use Controllers\ApiController;
 use Haridarshan\Instagram\Instagram;
 use Lokhman\Silex\Provider\ConfigServiceProvider;
+use Symfony\Component\HttpFoundation\Request;
 	
 /**
 *  handle static requests
 */
-if (array_key_exists('REQUEST_URI', $_SERVER) &&
-	preg_match('/\.(?:html|js|css|png|jpg|jpeg|gif|woff|ttf)$/', $_SERVER['REQUEST_URI'])) {
+$request = Request::createFromGlobals();
+$requestURI = $request->server->get('REQUEST_URI');
+
+if (preg_match('/\.(?:html|js|css|png|jpg|jpeg|gif|woff|ttf)$/', $requestURI)) {
 	return false;
 }
 	
@@ -44,7 +47,7 @@ $app['instagram'] = function() use ($app){
 	);
 };
 
-// Routes
-require __DIR__.'/routes.php';
+// Load Routes
+$app->mount('/', new Controllers\RouteController());
 	
 return $app;
