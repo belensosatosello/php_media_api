@@ -3,7 +3,6 @@
 // /app/app.php
 require __DIR__.'/bootstrap.php';
 
-use Controllers\ApiController;
 use Haridarshan\Instagram\Instagram;
 use Lokhman\Silex\Provider\ConfigServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
