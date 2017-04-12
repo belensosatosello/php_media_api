@@ -7,15 +7,15 @@ use Silex\Application;
 
 class ApiTest extends WebTestCase
 {
-	public function testInstagramLogin()
+    public function testInstagramLogin()
     {
         $client = $this->createClient();
         $crawler = $client->request('GET', '/');
         // Assert that the response is a redirect to the provided valid.login.url
         $this->assertTrue($client->getResponse()->isRedirect($this->app['valid.login_url']));
     }
-	
-	public function testInstagramSessionReset()
+    
+    public function testInstagramSessionReset()
     {
         $client = $this->createClient();
         $crawler = $client->request('GET', '/');
@@ -31,15 +31,15 @@ class ApiTest extends WebTestCase
         $this->assertFalse($this->app['session']->has('token'));
         $this->assertTrue($this->app['session']->has('token_control'));
     }
-	
-	public function testProfilePage()
+    
+    public function testProfilePage()
     {
         // Check for a valid token, user must submit a valid token to test
-        // get a valid token from the following link 
-		//https://api.instagram.com/oauth/authorize?client_id=44904229b57445f49a88ef2de046379f&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=token&state=01619ed&scope=basic+public_content
+        // get a valid token from the following link
+        //https://api.instagram.com/oauth/authorize?client_id=44904229b57445f49a88ef2de046379f&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=token&state=01619ed&scope=basic+public_content
         //This will redirect to a url ending with access_token=XXX
-		// paste XXX value it into config/test.json
-        if($this->app['valid.token']!=''){
+        // paste XXX value it into config/test.json
+        if ($this->app['valid.token']!='') {
             // Save session token
             $this->app['session']->set('token', $this->app['valid.token']);
             // Get the profile page
@@ -52,12 +52,11 @@ class ApiTest extends WebTestCase
         } else {
             echo "\n Get a valid token from: https://api.instagram.com/oauth/authorize?client_id=44904229b57445f49a88ef2de046379f&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=token&state=01619ed&scope=basic+public_content";
             echo "\n This will redirect to a url ending with access_token=XXX \n";
-			echo "paste XXX value into config/test.json";
-			
+            echo "paste XXX value into config/test.json";
         }
     }
 
-	public function testUrlWithoutParams()
+    public function testUrlWithoutParams()
     {
         $client = $this->createClient();
         // test wrong url
@@ -66,11 +65,11 @@ class ApiTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isNotFound());
     }
 
-	public function testValidMedia()
+    public function testValidMedia()
     {
         $client = $this->createClient();
-        // test a valid image 
-		$this->app['session']->set('token', $this->app['valid.token']);
+        // test a valid image
+        $this->app['session']->set('token', $this->app['valid.token']);
         $crawler = $client->request('GET', '/media/'.$this->app['valid.media_id']);
         // Assert that the "Content-Type" header is "application/json"
         $this->assertTrue(
@@ -94,18 +93,18 @@ class ApiTest extends WebTestCase
     }
     public function createApplication()
     {
-		$env = "test";
-		require __DIR__.'/../web/index.php';
-		unset($app['exception_handler']);
-		return $app;
+        $env = "test";
+        require __DIR__.'/../web/index.php';
+        unset($app['exception_handler']);
+        return $app;
     }
-	
-	public function testInvalidMedia()
+    
+    public function testInvalidMedia()
     {
         $client = $this->createClient();
-		//Set a valid token
-		$this->app['session']->set('token', $this->app['valid.token']);
-        // test an invalid image 
+        //Set a valid token
+        $this->app['session']->set('token', $this->app['valid.token']);
+        // test an invalid image
         $crawler = $client->request('GET', '/media/'.$this->app['invalid.media_id']);
         // Assert that the "Content-Type" header is "application/json"
         $this->assertTrue(
@@ -113,23 +112,23 @@ class ApiTest extends WebTestCase
                 'Content-Type',
                 'application/json'
             ),
-			'Header'.$client->getResponse()
+            'Header'.$client->getResponse()
         );
         // Assert that the response content contains error type
         $this->assertContains('APINotFoundError', $client->getResponse()->getContent());
-		// Assert that the response status code is 400
+        // Assert that the response status code is 400
         $this->assertEquals(
             400,
             $client->getResponse()->getStatusCode()
         );
     }
-	
-	public function testNoLocation()
+    
+    public function testNoLocation()
     {
         $client = $this->createClient();
-		//Set a valid token
-		$this->app['session']->set('token', $this->app['valid.token']);
-        // test an invalid image 
+        //Set a valid token
+        $this->app['session']->set('token', $this->app['valid.token']);
+        // test an invalid image
         $crawler = $client->request('GET', '/media/'.$this->app['invalid.no_location_media_id']);
         // Assert that the "Content-Type" header is "application/json"
         $this->assertTrue(

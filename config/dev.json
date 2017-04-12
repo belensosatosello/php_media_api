@@ -1,10 +1,17 @@
 {
-	"env" : "dev",
-    "debug" : true,
-    "instagram_api" : {
-        "clientId" : "44904229b57445f49a88ef2de046379f",
-        "clientSecret" : "b4b4fc1b7a1540ac91c72eeeca6c3d47",
-        "clientCallback" : "http://localhost:8000/",
-		"state" : "01619ed"
-    }
+  "env": "dev",
+  "debug": true,
+  "instagram_api": {
+    "clientId": "4651bc5f153b4b158662170fd12cfc44",
+    "clientSecret": "383ba33f9e5e439d9a2ecc3154fe335b",
+    "clientCallback": "http://localhost:8000",
+    "clientCallback": "http://localhost:8000",
+    "state": "01619zd"
+  },
+  "instagram_ap1i": {
+    "clientId": "44904229b57445f49a88ef2de046379f",
+    "clientSecret": "b4b4fc1b7a1540ac91c72eeeca6c3d47",
+    "clientCallback": "http://localhost:8000/",
+    "state": "01619zd"
+  }
 }

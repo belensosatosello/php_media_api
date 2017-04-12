@@ -1,3 +1,9 @@
 /vendor
 
-/app/development.log
+/development.log
+
+/.php_cs.cache
+
+/composer.phar
+
+/.idea

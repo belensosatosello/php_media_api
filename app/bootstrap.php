@@ -1,4 +1,4 @@
 <?php
 
-// web/index.php
-require __DIR__.'/../vendor/autoload.php';
+// app/bootstrap.php
+require __DIR__ . '/../vendor/autoload.php';

@@ -1,132 +1,115 @@
 <?php
 
-namespace Controllers;
-	
+namespace LocationAPI\Controllers;
+
+use LocationAPI\Repository\GeocoderRepository;
+use LocationAPI\Repository\InstagramRepository;
 use Silex\Application;
-use Exception;
-use Haridarshan\Instagram\Instagram;
-use Haridarshan\Instagram\InstagramRequest;
-use Haridarshan\Instagram\Exceptions\InstagramException;
-	
+
+/**
+ * Class ApiController
+ *
+ * @package LocationAPI\Controllers
+ */
 class ApiController
 {
-	public function getMediaLocation(Application $app,$media_id)
-	{		
-		$instagram = $app['instagram'];
-		$token = $app['session']->get('token');
-		
-		try {
-			// To get User Profile Details or to make any api call to instagram
-			$user = new InstagramRequest($instagram, "/media/".$media_id, [ "access_token" => $token ]);
-			// To get Response
-			$user_response = $user->getResponse();
-			
-			// To get Body
-			$user_data = $user_response->getBody();
-			
-			//If the response was not successful, return the error code
-			if($user_data->meta->code != 200)
-			{
-				return $app->json($response,$response->meta->code);
-			}
+    /**
+     *  The InstagramRepository where instagram data is persisted.
+     *
+     * @var $instagram LocationAPI\Repository\InstagramRepository;
+     */
+    protected $instagram;
 
-		}catch(InstagramException $e) {
-			return $app->json($e->getType() , $e->getCode());
-		} catch (Exception $ex) {
-            return $app->json($ex, 500);
+    /**
+     *  The GeocoderRepository where Geocoding data is persisted.
+     *
+     * @var $instagram LocationAPI\Repository\GeocoderRepository;
+     *
+     * @access protected
+     */
+    protected $geocoder;
+
+    /**
+     *  ApiController Constructor
+     *
+     * @param InstagramRepository $instagram
+     * @param GeocoderRepository $geocoder
+     */
+    public function __construct(InstagramRepository $instagram, GeocoderRepository $geocoder)
+    {
+        $this->instagram = $instagram;
+        $this->geocoder = $geocoder;
+    }
+
+    /**
+     * This function gets the media location information including:
+     * - latitude & longitude
+     * - street
+     * - administrative_area_level_1
+     * - administrative_area_level_2
+     * - country
+     *
+     * @param Application $app the silex Application Object
+     * @param string $media_id the media id for which we are retrieving the location.
+     * @return string with the json formatted information.
+     *
+     * @access public
+     */
+    public function getMediaLocation(Application $app, $media_id)
+    {
+        $geopoint = $this->instagram->getMediaLocation($app, $media_id);
+        $app['monolog']->debug(sprintf("ApiController::getMediaLocation geopoint is %s", $geopoint));
+
+        $geopoint = json_decode($geopoint);
+
+        if ((!empty($geopoint))) {
+            $extra_data = $this->geocoder->getLocationData($geopoint->latitude, $geopoint->longitude);
         }
-	
-		$geopoint = [];
-	
-		try{
-			if(empty($user_data->data->location))
-			{
-				throw new Exception("No instagram location data was found.");
-			}	
-			//Get the location information
-			$geopoint['latitude'] = $user_data->data->location->latitude;
-			$geopoint['longitude'] =$user_data->data->location->longitude;
-			
-			
-		} catch (Exception $ex) {
-            return $app->json(['id' => $user_data->data->id, 'location' => 'no location data']);
+
+        $location = [];
+
+        $location['geopoint'] =$geopoint;
+
+        if(!empty($extra_data))
+        {
+            $location['street'] = $extra_data['street'];
+            $location['administrative_area_level_1'] = $extra_data['administrative_area_level_1'];
+            $location['administrative_area_level_2'] = $extra_data['administrative_area_level_2'];
+            $location['country'] = $extra_data['country'];
         }
-		
-		$location = array(
-			"geopoint"=>$geopoint,
-			);
-			
-		$result_array = array(
-			"id" => $media_id,
-			"location" => $location,
-		);
-		
-		return $app->json($result_array);
-	
-	}
-	
-		
-	/**
-	*	This function gets the token required to retrieve data from the Instagram API.
-	*	
-	*	@param object $app the silex application object.
-	*	
-	* 	@return redirects to /profile.
-	*
-	*	@access public
-	*/
-	public function setToken(Application $app)
-	{
-		$app['session']->remove('token');
-		$instagram = $app['instagram'];
-			
-		// If we don't have an authorization code then get one
-		if (!isset($_GET['code'])) {
-			$scope = [
-				"basic",
-				"public_content"
-			];
-			return $app->redirect($instagram->getLoginUrl(["scope" => $scope]));
-		} else {
-			$oauth= $instagram->oauth($_GET['code']);
-			$token = $oauth->getAccessToken();
-			$app['session']->set('token', $token);
-			$app['session']->set('oauth', $oauth);
-			return $app->redirect('/profile');
-		}
-	}
-		
-	/**
-	*	This function shows basic information of the user that has been authenticated.
-	*
-	* 	@param object $app the silex application object.
-	*	
-	*	@return string the json response with user data.
-	*
-	*	@access public
-	*/
-	public function getUser(Application $app)
-	{
-		$instagram = $app['instagram'];
-		$token = $app['session']->get('token');
-		
-		try {
-			// To get User Profile Details or to make any api call to instagram
-			$request = new InstagramRequest($instagram, "/users/self", [ "access_token" => $token ]);
-			// To get Response
-			$user_response = $request->getResponse();
-			// To get Body
-			$user_data = $user_response->getData();
-			
-			$user = [];
-			$user['full_name'] = $user_data->full_name;
-			$user['username'] = $user_data->username;
-		
-		} catch(InstagramResponseException $e) {
-			echo $e->getMessage();
-		}catch(InstagramServerException $e) {
-			echo $e->getMessage();
-		}	
-			return $app->json($user);
-		}
-	}
+
+
+        $result_array = array(
+            "id" => $media_id,
+            "location" => $location
+        );
+
+        return json_encode($result_array,JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * This function gets the token required to retrieve data from the Instagram API.
+     *
+     * @param object|Application $app the silex application object.
+     * @return redirects to /profile.
+     *
+     * @access public
+     */
+    public function setToken(Application $app)
+    {
+        return $this->instagram->setToken($app);
+    }
+
+    /**
+     * This function shows basic information of the user that has been authenticated.
+     *
+     * @param Application $app the silex application object.
+     * @return string the json response with user data.
+     *
+     * @access public
+     */
+    public function getUser(Application $app)
+    {
+        return $this->instagram->getUserDetails($app);
+    }
+}
