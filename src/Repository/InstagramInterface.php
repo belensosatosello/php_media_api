@@ -2,8 +2,6 @@
 
 namespace LocationAPI\Repository;
 
-use Silex\Application;
-
 /**
  * Interface InstagramInterface
  *
@@ -12,27 +10,26 @@ use Silex\Application;
 interface InstagramInterface
 {
     /**
-     * @param Application $app
+     * @param $token
      * @param $media_id
      * @return mixed
      *
      * @access public
      */
-    public function getMediaLocation(Application $app, $media_id);
+    public function getMediaLocation($token, $media_id);
 
     /**
-     * @param Application $app
      * @return mixed
      *
      * @access public
      */
-    public function setToken(Application $app);
+    public function getToken();
 
     /**
-     * @param Application $app
+     * @param $token
      * @return mixed
      *
      * @access public
      */
-    public function getUserDetails(Application $app);
+    public function getUserDetails($token);
 }

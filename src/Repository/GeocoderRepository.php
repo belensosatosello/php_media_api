@@ -21,7 +21,7 @@ class GeocoderRepository implements GeocoderInterface
      */
     public function __construct()
     {
-        $curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
+        $curl = new \Ivory\HttpAdapter\SocketHttpAdapter();
         $this->geocoder = new \Geocoder\Provider\GoogleMaps($curl);
     }
 
@@ -38,8 +38,8 @@ class GeocoderRepository implements GeocoderInterface
     {
         $response = array(
             'street' => null,
-            'admin_level_1'=> null,
-            'admin_level_2'=> null,
+            'administrative_area_level_1'=> null,
+            'administrative_area_level_2'=> null,
             'country'=>null
         );
 

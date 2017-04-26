@@ -2,6 +2,7 @@
 
 namespace LocationAPI\Controllers;
 
+use Haridarshan\Instagram\Exceptions\InstagramException;
 use LocationAPI\Repository\GeocoderRepository;
 use LocationAPI\Repository\InstagramRepository;
 use Silex\Application;
@@ -16,14 +17,14 @@ class ApiController
     /**
      *  The InstagramRepository where instagram data is persisted.
      *
-     * @var $instagram LocationAPI\Repository\InstagramRepository;
+     * @var $instagram InstagramRepository;
      */
     protected $instagram;
 
     /**
      *  The GeocoderRepository where Geocoding data is persisted.
      *
-     * @var $instagram LocationAPI\Repository\GeocoderRepository;
+     * @var $geocoder GeocoderRepository;
      *
      * @access protected
      */
@@ -57,47 +58,67 @@ class ApiController
      */
     public function getMediaLocation(Application $app, $media_id)
     {
-        $geopoint = $this->instagram->getMediaLocation($app, $media_id);
-        $app['monolog']->debug(sprintf("ApiController::getMediaLocation geopoint is %s", $geopoint));
+        $token = $app['session']->get('token');
 
-        $geopoint = json_decode($geopoint);
+        try {
+            $geopoint = $this->instagram->getMediaLocation($token, $media_id);
 
-        if ((!empty($geopoint))) {
-            $extra_data = $this->geocoder->getLocationData($geopoint->latitude, $geopoint->longitude);
+            $geopoint = json_decode($geopoint);
+
+            if (!empty($geopoint->latitude) && !empty($geopoint->longitude)) {
+                $extra_data = $this->geocoder->getLocationData($geopoint->latitude, $geopoint->longitude);
+            }
+
+            $location = [];
+
+            $location['geopoint'] = $geopoint;
+
+            if (!empty($extra_data)) {
+                $location['street'] = $extra_data['street'];
+                $location['administrative_area_level_1'] = $extra_data['administrative_area_level_1'];
+                $location['administrative_area_level_2'] = $extra_data['administrative_area_level_2'];
+                $location['country'] = $extra_data['country'];
+            }
+
+            $result_array = array(
+                "meta" => array(
+                    "code" => '200'
+                ),
+                "id" => $media_id,
+                "location" => $location
+            );
+        } catch (InstagramException $ex) {
+            return $this->exceptionToJson($ex);
         }
 
-        $location = [];
-
-        $location['geopoint'] =$geopoint;
-
-        if(!empty($extra_data))
-        {
-            $location['street'] = $extra_data['street'];
-            $location['administrative_area_level_1'] = $extra_data['administrative_area_level_1'];
-            $location['administrative_area_level_2'] = $extra_data['administrative_area_level_2'];
-            $location['country'] = $extra_data['country'];
-        }
-
-
-        $result_array = array(
-            "id" => $media_id,
-            "location" => $location
-        );
-
-        return json_encode($result_array,JSON_UNESCAPED_UNICODE);
+        return json_encode($result_array, JSON_UNESCAPED_UNICODE);
     }
 
     /**
      * This function gets the token required to retrieve data from the Instagram API.
      *
      * @param object|Application $app the silex application object.
-     * @return redirects to /profile.
+     * @return redirects to /profile or instagram login URL
      *
      * @access public
      */
-    public function setToken(Application $app)
+    public function getToken(Application $app)
     {
-        return $this->instagram->setToken($app);
+        $app['session']->remove('token');
+
+        $token = $this->instagram->getToken();
+
+        if (!$token) {
+            $scope = [
+                "basic",
+                "public_content"
+            ];
+
+            return $app->redirect($this->instagram->getLoginUrl(["scope" => $scope]));
+        } else {
+            $app['session']->set('token', $token);
+            return $app->redirect('/profile');
+        }
     }
 
     /**
@@ -110,6 +131,28 @@ class ApiController
      */
     public function getUser(Application $app)
     {
-        return $this->instagram->getUserDetails($app);
+        $token = $app['session']->get('token');
+
+        try {
+            return $this->instagram->getUserDetails($token);
+        } catch (InstagramException $ex) {
+            return $this->exceptionToJson($ex);
+        }
     }
+
+    public function exceptionToJson(InstagramException $ex)
+    {
+        $message = json_decode($ex->getMessage());
+
+        $result_array = array(
+            "meta" => array(
+                "code" => $ex->getCode(),
+                "type" => $ex->getType(),
+                "message" => $message->Message
+            )
+        );
+
+        return json_encode($result_array, JSON_UNESCAPED_UNICODE);
+    }
+
 }

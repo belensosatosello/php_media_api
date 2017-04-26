@@ -3,7 +3,7 @@
 // /app/app.php
 require __DIR__ . '/bootstrap.php';
 
-
+use Haridarshan\Instagram\Instagram;
 use LocationAPI\Controllers;
 use LocationAPI\Repository;
 use Lokhman\Silex\Provider\ConfigServiceProvider;
@@ -42,12 +42,16 @@ $app->register(new ConfigServiceProvider(), [
 
 //Register repositories
 $app['instagram.repository'] = function ($app) {
-    return new Repository\InstagramRepository(
-        $app['instagram_api']['clientId'],
-        $app['instagram_api']['clientSecret'],
-        $app['instagram_api']['clientCallback'],
-        $app['instagram_api']['state']
+    $instagram = new Instagram(
+        array(
+            'ClientId' => $app['instagram_api']['clientId'],
+            'ClientSecret' => $app['instagram_api']['clientSecret'],
+            'Callback' => $app['instagram_api']['clientCallback'],
+            "State" => $app['instagram_api']['state'],
+        )
     );
+
+    return new Repository\InstagramRepository($instagram);
 };
 
 $app['geocoder.repository'] = function ($app) {
@@ -57,11 +61,6 @@ $app['geocoder.repository'] = function ($app) {
 //Register controller
 $app['instagram.controller'] = function ($app) {
     return new Controllers\ApiController($app['instagram.repository'], $app['geocoder.repository']);
-};
-
-//Register controller
-$app['geocoder.controller'] = function ($app) {
-    return new Controllers\GeocodeController();
 };
 
 // Load Routes

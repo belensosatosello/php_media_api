@@ -21,7 +21,7 @@ class RouteController implements ControllerProviderInterface
         $factory = $app['controllers_factory'];
 
         $factory->get('/media/{media_id}', "instagram.controller:getMediaLocation");
-        $factory->get('/', "instagram.controller:setToken");
+        $factory->get('/', "instagram.controller:getToken");
         $factory->get('/profile', "instagram.controller:getUser");
 
         return $factory;
