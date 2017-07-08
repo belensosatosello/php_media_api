@@ -2,6 +2,8 @@
 
 namespace LocationAPI\Repository;
 
+use Silex\Application;
+
 /**
  * Class GeocoderRepository
  *
@@ -19,9 +21,8 @@ class GeocoderRepository implements GeocoderInterface
     /**
      * GeocoderRepository constructor.
      */
-    public function __construct()
+    public function __construct($curl)
     {
-        $curl = new \Ivory\HttpAdapter\SocketHttpAdapter();
         $this->geocoder = new \Geocoder\Provider\GoogleMaps($curl);
     }
 
@@ -34,26 +35,34 @@ class GeocoderRepository implements GeocoderInterface
      * @param $longitude
      * @return array
      */
-    public function getLocationData($latitude, $longitude)
+    public function getLocationData(Application $app, $latitude, $longitude)
     {
-        $response = array(
-            'street' => null,
-            'administrative_area_level_1'=> null,
-            'administrative_area_level_2'=> null,
-            'country'=>null
-        );
+        $response = [
+            'street' => "no data available",
+            'administrative_area_level_1' => "no data available",
+            'administrative_area_level_2' => "no data available",
+            'country' => "no data available"
+        ];
 
-        $results =$this->geocoder->reverse($latitude, $longitude);
+        $results = $this->geocoder->reverse($latitude, $longitude);
+
+        $app['monolog']->debug(sprintf('The GEOCODER results %s',json_encode($results)));
 
         if (!empty($data = $results->first())) {
             $admin_levels = $data->getAdminLevels();
 
-            $response = array(
-                'street' => $data->getStreetName(),
-                'administrative_area_level_1'=> $admin_levels->get(1)->getName(),
-                'administrative_area_level_2'=> $admin_levels->get(2)->getName(),
-                'country'=>$data->getCountry()->getName()
-            );
+            if (!empty($data->getStreetName())) {
+                $response['street'] = $data->getStreetName();
+            }
+            if (!empty($admin_levels->get(1))) {
+                $response['administrative_area_level_1'] = $admin_levels->get(1)->getName();
+            }
+            if (!empty($admin_levels->get(2))) {
+                $response['administrative_area_level_2'] = $admin_levels->get(2)->getName();
+            }
+            if (!empty($data->getCountry())) {
+                $response['country'] = $data->getCountry()->getName();
+            }
         }
 
         return $response;

@@ -55,7 +55,7 @@ $app['instagram.repository'] = function ($app) {
 };
 
 $app['geocoder.repository'] = function ($app) {
-    return new Repository\GeocoderRepository();
+    return new Repository\GeocoderRepository(new \Ivory\HttpAdapter\SocketHttpAdapter());
 };
 
 //Register controller
@@ -65,5 +65,15 @@ $app['instagram.controller'] = function ($app) {
 
 // Load Routes
 $app->mount('/', new Controllers\RouteController());
+
+//Error Handling
+$app->error(function (Exception $e, $code) use ($app) {
+    return $app->json([
+        'meta' => [
+            'code' => $e->getCode(),
+            'message' => $e->getMessage()
+        ]]
+    );
+});
 
 return $app;

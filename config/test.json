@@ -16,14 +16,20 @@
   "invalid.no_location_media_id": "1417818202482025586_1173952339",
   "valid.userDetails": {
     "meta": {
-      "code": "200"
+      "code": 200
     },
     "full_name": "Tony Stark",
     "username": "ironMan_17"
   },
   "valid.geopoint": {
-    "latitude": -31.293694444444,
-    "longitude": -64.306611111111
+      "latitude":31.1234,
+      "longitude":-64.3066
+  },
+  "valid.locationData": {
+     "street":"Evergreen 742",
+     "administrative_area_level_1":"Springfield",
+     "administrative_area_level_2":"Springfield State",
+     "country":"USA"
   },
   "valid.media_id": "1402451097368744018_1173952339",
   "valid.code" : "de7309be48f84fe8883b5ac463c1783d&state=01619zd"

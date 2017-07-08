@@ -6,6 +6,8 @@ use Haridarshan\Instagram\Exceptions\InstagramException;
 use Haridarshan\Instagram\Exceptions\InstagramResponseException;
 use Haridarshan\Instagram\Instagram;
 use Haridarshan\Instagram\InstagramRequest;
+use LocationAPI\Exception\DataNotAvailable;
+use LocationAPI\Exception\UserNotFound;
 
 /**
  * Class InstagramRepository
@@ -14,9 +16,6 @@ use Haridarshan\Instagram\InstagramRequest;
  */
 class InstagramRepository implements InstagramInterface
 {
-    const ERROR_TOKEN = "User has not been identified.";
-    const ERROR_MSG_TOKEN = "API requires an authenticated users access token";
-
     /**
      * The Instagram object.
      *
@@ -72,17 +71,13 @@ class InstagramRepository implements InstagramInterface
      * @return the json response with user data.
      *
      * @access public
-     * @throws InstagramException
+     * @throws UserNotFound
+     * @throws
      */
     public function getUserDetails($token)
     {
         if (!$token) {
-            $message = json_encode(array(
-                'Type' => "Unauthorized",
-                'Message' => "API requires an authenticated users access token"
-            ));
-
-            throw new InstagramException($message, 401);
+            throw new UserNotFound();
         }
 
         try {
@@ -95,7 +90,7 @@ class InstagramRepository implements InstagramInterface
 
             if (!empty($user_data)) {
                 $user['meta'] = array(
-                    "code" => '200'
+                    "code" => 200
                 );
 
                 $user['full_name'] = $user_data->full_name;
@@ -118,21 +113,17 @@ class InstagramRepository implements InstagramInterface
      * @return string $geopoint an array containing latitude and longitude.
      *
      * @access public
+     * @throws UserNotFound
+     * @throws DataNotAvailable
      * @throws InstagramException
      */
     public function getMediaLocation($token, $media_id)
     {
         if (!$token) {
-            $message = json_encode(array(
-                'Type' => "Unauthorized",
-                'Message' => "API requires an authenticated users access token"
-            ));
-            throw new InstagramException($message, 401);
+            throw new UserNotFound();
         }
 
         try {
-
-            //TODO : Instagram may be unreachable (disconeccted from internet or whatever)
             $request = new InstagramRequest($this->instagram, "/media/" . $media_id, ["access_token" => $token]);
 
             $response = $request->getResponse();
@@ -142,14 +133,15 @@ class InstagramRepository implements InstagramInterface
             $geopoint = [];
 
             if (empty($user_data->data->location)) {
-                $msg = json_encode(array('Type' => 'APINotFoundError', 'Message' => 'Location data not available'));
-                throw new InstagramException($msg, 400);
+                throw new DataNotAvailable();
             }
 
             $geopoint['latitude'] = $user_data->data->location->latitude;
             $geopoint['longitude'] = $user_data->data->location->longitude;
-        } catch (InstagramResponseException $e) {
-            throw new InstagramException($e->getMessage(), $e->getCode());
+        } catch (InstagramException $e) {
+            $message = json_decode($e->getMessage());
+            $msg = $message->Message;
+            throw new InstagramException($msg, $e->getCode());
         } catch (InstagramServerException $e) {
             throw new InstagramException($e->getMessage(), $e->getCode());
         }

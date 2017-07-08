@@ -2,6 +2,8 @@
 
 namespace LocationAPI\Repository;
 
+use Silex\Application;
+
 /**
  * Interface GeocoderInterface
  *
@@ -14,5 +16,5 @@ interface GeocoderInterface
      * @param $longitude
      * @return mixed
      */
-    public function getLocationData($latitude, $longitude);
+    public function getLocationData(Application $app,$latitude, $longitude);
 }

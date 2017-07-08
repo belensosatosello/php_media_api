@@ -6,14 +6,16 @@ use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 
 /**
- * RouteController class
+ * Class RouteController
+ *
+ * @package LocationAPI\Controllers
  */
 class RouteController implements ControllerProviderInterface
 {
     /**
      * This function returns the routes to connect to the given application.
      *
-     * @param Application $app
+     * @param Application $app the silex Application Object
      * @return mixed
      */
     public function connect(Application $app)

@@ -1,6 +1,6 @@
 # **Media Location API**
 
-This Rest API returns information about the location of an Instagram media. This information can be retrieved by hiting the endpoint provided using the media id as a parameter.
+This Rest API returns information about the location of an Instagram media. This information can be retrieved by hitting the endpoint provided using the media id as a parameter.
 
 * * *
 ## **Setup**
@@ -30,8 +30,8 @@ After that you will need to run the following:
 
 Now you can access the following URLs:
 
-- [localhost:8000](localhost:8000): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account.Your token will be generated and you will be redirected to /profile.
-- [localhost:8000/profile](localhost:8000/prodile): Here you can see basic information of the authenticated user.
+- [localhost:8000](http://localhost:8000): You must access this url the first time you use the API. It will take you to the Instagram login page and request for permissions to your Instagram account.Your token will be generated and you will be redirected to /profile.
+- [localhost:8000/profile](http://localhost:8000/profile): Here you can see basic information of the authenticated user.
 - [localhost:8000/media/{media\_id}](http://localhost:8000/media/1402451097368744018_1173952339): Here you can see the media location data.
 
 * * *
@@ -43,14 +43,21 @@ Now you can access the following URLs:
     GET /media/123456
 
 
-### Sample Response
+### Sample Response  
     {
-        "id": 123456,
-        "location": {
-            "geopoint": {
-                "latitude": 42.277,
-                "longitude": -71.9256
-            }
+        "meta":{
+            "code":"200"
+            },
+        "id":"123456",
+        "location":{
+            "geopoint":{
+                "latitude":42.277,
+                "longitude":-71.9256
+            },
+            "street":"Fake Street",
+            "administrative_area_level_1":"Any City",
+            "administrative_area_level_2":"Example State",
+            "country":"Example Country"
         }
     }
 
@@ -79,3 +86,21 @@ This API it was tested using built in PHP server due to the fact that it was the
 I used [Instagram-php](https://github.com/haridarshan/instagram-php) to get Instagram token and data. This library is a wrapper that simplifies the access to Instagram API. I struggled a bit trying to get the token within the application but this library helped me to do it.
 
 I also struggled when developing and running the Unit Tests, but following other sample applications (as well as development blogs and forums on Silex and PHPUnit) I was able to figure out what to test and how.
+
+After the **code review** some changes were introduced. 
+
+* Composer.lock was removed from .gitignore to include it in the repository.
+* A class was implemented to provide routes instead of using a "require". This was done following [this](https://www.matthewdawkins.co.uk/2015/05/controller-routes-in-silex/) tutorial.
+* [This](https://bitbucket.org/belensosatosello/belensosatosello-test/src/559c8ec06c0a58de91ed7f6cb008228de3710970/app/app.php?at=master&fileviewer=file-view-default#app.php-13:16) piece of code was improved using [this](http://symfony.com/doc/current/introduction/http_fundamentals.html#requests-and-responses-in-symfony).
+* Dependency injection was added follwing [Silex Documentation](https://silex.sensiolabs.org/doc/2.0/providers/service_controller.html).
+
+After completing these steps I downloaded PHP Storm which improved the detection of coding errors. This IDE also helped to use php-cs-fixer (with a plugin) to make the code follow PSR-2 standards.
+
+Another important change was the use of namespaces and the implementation of the [Repository Pattern](http://designpatternsphp.readthedocs.io/en/latest/More/Repository/README.html).
+
+Unit Tests were updated in order to mock external services, this helped to identify structure errors in the project.
+
+Regarding error handling it was really hard for me to found a standard to follow as best practice. I worked with this tutorial which looked like a good approach. 
+
+
+ 

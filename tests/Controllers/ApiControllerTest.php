@@ -62,6 +62,8 @@ class ApiControllerTest extends WebTestCase
 
         $this->assertNotNull($result);
         $this->assertEquals(200, json_decode($result)->meta->code);
+        $this->assertContains("username", $result);
+        $this->assertContains("full_name", $result);
     }
 
     public function testGetMediaLocationOk()
@@ -72,11 +74,23 @@ class ApiControllerTest extends WebTestCase
             ->method('getMediaLocation')
             ->will($this->returnValue($getMediaLocationMockResponse));
 
+        $getLocationDataMockResponse = $this->app['valid.locationData'];
+
+        $this->geocoderMock->expects($this->once())
+            ->method('getLocationData')
+            ->willReturn($getLocationDataMockResponse);
+
+        $this->app['monolog']->debug(sprintf("Get Media Location Mock Response is %s :",
+            json_encode($getMediaLocationMockResponse)));
+
         $apiController = new ApiController($this->instagramMock, $this->geocoderMock);
 
         $result = $apiController->getMediaLocation($this->app, $this->app['valid.media_id']);
 
         $this->assertNotNull($result);
         $this->assertEquals(200, json_decode($result)->meta->code);
+        $this->assertContains("geopoint", $result);
+        $this->assertContains("street", $result);
+        $this->assertContains("administrative_area_level_1", $result);
     }
 }

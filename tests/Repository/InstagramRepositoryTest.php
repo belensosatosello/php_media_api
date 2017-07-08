@@ -52,11 +52,29 @@ class InstagramRepositoryTest extends WebTestCase
 
 //    public function testGetUserDetailsOk()
 //    {
-//        $this->app['session'] = $this->app['valid.token'];
-//
-//        $requestMock = $this->getMockBuilder(InstagramRequest::class)
+//        $mockRequest = $this->getMockBuilder(InstagramRequest::class)
 //            ->disableOriginalConstructor()
 //            ->getMock();
 //
+//        $mockResponse = $this->getMockBuilder(InstagramResponse::class)
+//            ->disableOriginalConstructor()
+//            ->getMock();
+//
+//        $mockRequest->expects($this->once())
+//            ->method('getResponse')
+//            ->willReturn($mockResponse);
+//
+//        $mockUserData = json_encode($this->app['valid.userDetails']);
+//
+//        $mockResponse->expects($this->once())
+//            ->method('getData')
+//            ->willReturn($mockUserData);
+//
+//        $instaRepo = new InstagramRepository($this->instagramApiMock);
+//
+//        $result = $instaRepo->getUserDetails($this->app['valid.token']);
+//
+//        $this->assertNotNull($result);
+//        $this->assertEquals($this->app['valid.token'], $result);
 //    }
 }
